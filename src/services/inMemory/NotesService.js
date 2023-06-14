@@ -2,6 +2,8 @@
 /* eslint no-underscore-dangle: ["error", { "allowAfterThis": true }] */
 
 const { nanoid } = require('nanoid');
+const InvariantError = require('../../exceptions/InvariantError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class NotesService {
   constructor() {
@@ -22,7 +24,7 @@ class NotesService {
     const isSuccess = this._notes.filter((note) => note.id === id).length > 0;
 
     if (!isSuccess) {
-      throw new Error('Catatan gagal ditambahkan');
+      throw new InvariantError('Catatan gagal ditambahkan');
     }
 
     return id;
@@ -35,7 +37,7 @@ class NotesService {
   getNoteById(id) {
     const note = this._notes.filter((n) => n.id === id)[0];
     if (!note) {
-      throw new Error('Catatan gagal ditemukan');
+      throw new NotFoundError('Catatan tidak ditemukan');
     }
 
     return note;
@@ -45,7 +47,7 @@ class NotesService {
     const index = this._notes.findIndex((note) => note.id === id);
 
     if (index === -1) {
-      throw new Error('Gagal memperbarui catatan. Id tidak ditemukan');
+      throw new NotFoundError('Gagal memperbarui catatan. Id tidak ditemukan');
     }
 
     const updateAt = new Date().toISOString();
@@ -63,10 +65,10 @@ class NotesService {
     const index = this._notes.findIndex((note) => note.id === id);
 
     if (index === -1) {
-      throw new Error('Gagal memperbarui catatan. Id tidak ditemukan');
+      throw new NotFoundError('Gagal menghapus catatan. Id tidak ditemukan');
     }
 
-    this._notes.slice(index, 1);
+    this._notes.splice(index, 1);
   }
 }
 
