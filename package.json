@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/hapi__hapi": "^21.0.0",
     "eslint": "^7.21.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
@@ -20,7 +21,8 @@
   },
   "dependencies": {
     "@hapi/hapi": "^20.1.0",
-    "bcrypt": "^5.1.0",
+    "@hapi/jwt": "^3.2.0",
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.3.0",
     "joi": "^17.9.2",
     "nanoid": "^3.1.20",
