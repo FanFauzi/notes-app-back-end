@@ -1,8 +1,8 @@
 // mengimport dotenv dan menjalankan konfigurasinya
 require('dotenv').config();
 
-const Jwt = require('@hapi/jwt');
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
 
 // notes
 const notes = require('./api/notes');
@@ -20,13 +20,20 @@ const AuthenticationsService = require('./services/postgres/AuthenticationsServi
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
 
+// collaborations
+const collaborations = require('./api/collaborations');
+const CollaborationsService = require('./services/postgres/CollaborationsService');
+const CollaborationsValidator = require('./validator/collaborations');
+
 const ClientError = require('./exceptions/ClientError');
+// const AuthenticationError = require('./exceptions/AuthenticationError');
 
 const init = async () => {
   // membuat instance
   const notesService = new NotesService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const collaborationsService = new CollaborationsService();
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
@@ -85,13 +92,21 @@ const init = async () => {
         validator: AuthenticationsValidator,
       },
     },
+    {
+      plugin: collaborations,
+      options: {
+        collaborationsService,
+        notesService,
+        validator: CollaborationsValidator,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
     if (response instanceof Error) {
-      console.error(response);
+      console.log(response);
       if (response instanceof ClientError) {
         const newResponse = h.response({
           status: 'fail',

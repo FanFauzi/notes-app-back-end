@@ -20,20 +20,30 @@ class NotesHandler {
         noteId,
       },
     });
-    console.error(response);
+    // console.error(response);
     response.code(201);
     return response;
   }
 
-  async getNotesHandler(request) {
+  async getNotesHandler(request, h) {
     const { id: credentialId } = request.auth.credentials;
+    // console.log(request.auth.credentials);
+    // console.log(credentialId);
     const notes = await this.service.getNotes(credentialId);
-    return {
-      status: 'success',
+    // // console.log(notes);
+    const response = h.response({
       data: {
         notes,
       },
-    };
+    });
+    response.code(401);
+    return response;
+    // return {
+    //   status: 'success',
+    //   data: {
+    //     notes,
+    //   },
+    // };
   }
 
   async getNoteByIdHandler(request) {

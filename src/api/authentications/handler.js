@@ -13,11 +13,11 @@ class AuthenticationsHandler {
     const { username, password } = request.payload;
     // memeriksa kredensial pada request.payload
     // menampung nilai id ke variable id
-    const id = await this.usersService.verifyUsersCredential(username, password);
+    const id = await this.usersService.verifyUserCredential(username, password);
     // membuat access token dan refresh token
     const accessToken = this.tokenManager.generateAccessToken({ id });
     const refreshToken = this.tokenManager.generateRefreshToken({ id });
-    // menyimpan refresh token ke database agar bida memperbarui access token
+    // menyimpan refresh token ke database agar bisa memperbarui access token
     await this.authenticationsService.addRefreshToken(refreshToken);
     // mengembalikan request dengan response yang membawa accessToken dan refreshToken di data body
     const response = h.response({
