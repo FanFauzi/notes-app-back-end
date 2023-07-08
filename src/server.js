@@ -27,13 +27,14 @@ const CollaborationsValidator = require('./validator/collaborations');
 
 const ClientError = require('./exceptions/ClientError');
 // const AuthenticationError = require('./exceptions/AuthenticationError');
+// const InvariantError = require('./exceptions/InvariantError');
 
 const init = async () => {
   // membuat instance
-  const notesService = new NotesService();
+  const collaborationsService = new CollaborationsService();
+  const notesService = new NotesService(collaborationsService);
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const collaborationsService = new CollaborationsService();
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
@@ -104,9 +105,18 @@ const init = async () => {
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
-
+    // console.log(response.output.statusCode);
     if (response instanceof Error) {
       console.log(response);
+      // console.log(response.output.statusCode);
+      if (response.output.statusCode === 401) {
+        const newResponse = h.response({
+          status: 'fail',
+          message: response.message,
+        });
+        newResponse.code(response.output.statusCode);
+        return newResponse;
+      }
       if (response instanceof ClientError) {
         const newResponse = h.response({
           status: 'fail',
@@ -115,6 +125,12 @@ const init = async () => {
         newResponse.code(response.statusCode);
         return newResponse;
       }
+      // const newResponse = h.response({
+      //   status: 'fail',
+      //   message: response.output,
+      // });
+      // newResponse.code(response.output.statusCode);
+      // return newResponse;
 
       if (!response.isServer) {
         return h.response;
@@ -127,7 +143,6 @@ const init = async () => {
       newResponse.code(500);
       return newResponse;
     }
-
     return h.continue;
   });
 

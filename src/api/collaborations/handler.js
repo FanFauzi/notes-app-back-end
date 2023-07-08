@@ -13,7 +13,7 @@ class CollaborationsHandler {
     await this.notesService.verifyNoteOwner(noteId, credentialId);
     const collaborationId = await this.collaborationsService.addCollaboration(noteId, userId);
 
-    const reponse = h.reponse({
+    const reponse = h.response({
       status: 'success',
       message: 'Kolaborasi berhasil ditambahkan',
       data: {
